@@ -59,6 +59,10 @@ pnpm --filter @repo/db db:generate   # Generate migrations
 pnpm --filter @repo/db db:migrate    # Run migrations
 pnpm --filter @repo/db db:push       # Push schema changes
 pnpm --filter @repo/db db:studio     # Open Drizzle Studio
+
+# Skill Validation
+pnpm skills:validate                 # Validate skill metadata frontmatter
+pnpm skills:links                    # Validate relative markdown links in skills
 ```
 
 ## When Adding a New Demo App

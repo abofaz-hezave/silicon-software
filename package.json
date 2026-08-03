@@ -16,7 +16,9 @@
     "test": "turbo run test",
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "skills:validate": "node scripts/validate-skill-metadata.mjs skills",
+    "skills:links": "node scripts/validate-skill-links.mjs README.md skills"
   },
   "devDependencies": {
     "prettier": "^3.3.0",

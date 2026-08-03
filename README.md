@@ -79,6 +79,26 @@ agency-platform/
 | `pnpm lint` | Lint all packages |
 | `pnpm format` | Format all files with Prettier |
 | `pnpm clean` | Remove all build artifacts |
+| `pnpm skills:validate` | Validate skill metadata frontmatter |
+| `pnpm skills:links` | Validate relative markdown links in skills |
+
+## Available Skills
+
+A curated catalog of agent skills is available in the `skills/` directory:
+
+### Development & Workflow
+- [code-review](file:///Users/paul/Desktop/project/silicon-software/skills/code-review) — Evidence-bound generic and plan-backed reviews.
+- [create-plan](file:///Users/paul/Desktop/project/silicon-software/skills/create-plan) — Research, plan, review, and construct execution plans.
+- [decomplex](file:///Users/paul/Desktop/project/silicon-software/skills/decomplex) — Audit, prevention, and triage of unnecessary complexity.
+- [implement-plan](file:///Users/paul/Desktop/project/silicon-software/skills/implement-plan) — Bounded checklist execution loop with verification.
+- [web-research](file:///Users/paul/Desktop/project/silicon-software/skills/web-research) — Perform research with search, retrieval, and document context.
+
+### Agency Client Tools
+- [create-slides](file:///Users/paul/Desktop/project/silicon-software/skills/create-slides) — Build and style HTML slides from structural templates.
+- [explain](file:///Users/paul/Desktop/project/silicon-software/skills/explain) — Generate explanations in Markdown and standalone offline HTML.
+
+### Custom Skill Authoring
+- [create-skill](file:///Users/paul/Desktop/project/silicon-software/skills/create-skill) — Author, refine, and validate custom Agent Skills.
 
 ## Contributing
 
