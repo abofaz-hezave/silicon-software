@@ -1,0 +1,17 @@
+{
+  "name": "@repo/infra",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo 'No build step for infra yet'",
+    "dev": "echo 'SST dev not configured yet'",
+    "lint": "eslint . --max-warnings 0",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .turbo .sst"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "typescript": "^5.5.0"
+  }
+}
