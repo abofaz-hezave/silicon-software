@@ -99,3 +99,17 @@ pnpm skills:links                    # Validate relative markdown links in skill
 - **kebab-case** for file names, **PascalCase** for React components.
 - **Strict TypeScript** — no `any`, prefer `unknown`.
 - **Type imports** — use `import type { ... }` where applicable.
+
+## Agent skills
+
+### Issue tracker
+
+No tracker decided yet — issues stay in-repo for now. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
