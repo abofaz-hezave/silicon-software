@@ -35,6 +35,7 @@ export interface RateLimitResult {
  * }
  * ```
  */
+// eslint-disable-next-line @typescript-eslint/require-await -- async signature is part of the planned interface
 export async function checkRateLimit(
   _identifier: string,
   limit: number,

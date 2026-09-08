@@ -1,6 +1,7 @@
 {
   "extends": "@repo/config/typescript/base",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./dist",
     "rootDir": "./src"
   },

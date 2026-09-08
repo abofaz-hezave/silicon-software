@@ -17,7 +17,7 @@ agency-platform/
 │   ├── ui/            ← shadcn/ui components (React 19, framework-agnostic)
 │   ├── config/        ← Shared ESLint, TypeScript, Tailwind configs
 │   ├── auth/          ← Authentication logic (placeholder)
-│   ├── db/            ← Drizzle ORM schemas + client (Postgres)
+│   ├── data/          ← DynamoDB client + submission repositories
 │   └── rate-limit/    ← Abuse protection utilities (placeholder)
 │
 ├── infra/             ← SST v3 (Ion) infrastructure definitions
@@ -54,11 +54,6 @@ pnpm format:check
 # Clean all build artifacts
 pnpm clean
 
-# Database operations (from packages/db)
-pnpm --filter @repo/db db:generate   # Generate migrations
-pnpm --filter @repo/db db:migrate    # Run migrations
-pnpm --filter @repo/db db:push       # Push schema changes
-pnpm --filter @repo/db db:studio     # Open Drizzle Studio
 
 # Skill Validation
 pnpm skills:validate                 # Validate skill metadata frontmatter
@@ -75,7 +70,7 @@ pnpm skills:links                    # Validate relative markdown links in skill
    {
      "dependencies": {
        "@repo/ui": "workspace:*",
-       "@repo/db": "workspace:*"
+       "@repo/data": "workspace:*"
      }
    }
    ```

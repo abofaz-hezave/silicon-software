@@ -1,3 +1,43 @@
+# Build Plan — Version 1
+
+## Version 1 scope
+
+Version one ships **one product only**: Intelligent Briefing, demonstrated as a
+**mocked preview** (fixed sample content, no real product backend). Everything else
+is deferred. Concretely:
+
+- **One product, mocked**: the marketing site presents Intelligent Briefing plus an
+  anonymous product preview with fixed sample content. No customer workspaces, no
+  real briefing pipeline, no other products.
+- **No product database in v1**: the only persisted data is form submissions, stored
+  in **DynamoDB** behind a Lambda-backed API (see architecture below).
+- **No auth, no rate limiting**: `@repo/auth` and `@repo/rate-limit` remain
+  unimported placeholders until v2.
+- **Standard AWS serverless architecture**: compute is Lambda functions behind API
+  Gateway; storage is DynamoDB. No Drizzle ORM, no drizzle-kit, no direct Postgres
+  connections from the app.
+
+### AWS architecture (v1)
+
+```
+Browser ──► CloudFront / CDN
+              │
+              ├─► Next.js site (SST `Nextjs`, runs on Lambda)
+              │      └─ qualification Server Action ──► POST /submissions
+              │
+              └─► API Gateway (SST `Api`) ──► Lambda (SST `Function`)
+                                                └─► DynamoDB (SST `Table`)
+```
+
+**Storing form data: DynamoDB.** It is the best fit for a serverless form in v1:
+schema-less (no migrations — this removes the need for drizzle-kit), pay-per-use
+(fine for low traffic), no connection-pooling issues inside Lambda (Postgres needs
+pooling we don't want to manage), and fast per-record reads for the operator's later
+triage view. Write path: the Server Action POSTs to the internal API Gateway URL
+(from the SST `Resource` binding); the Lambda validates with Zod and writes the item.
+Not chosen: S3 (archival, no per-record querying) and Aurora Serverless v2 (overkill
+for one form, reintroduces connection management).
+
 # Phase 1: Monorepo Foundation Setup
 
 You are setting up a production-grade Turborepo monorepo for a software agency
@@ -24,11 +64,10 @@ agency-platform/
 ├── packages/
 │   ├── ui/                     shared shadcn/ui components
 │   ├── config/                 shared eslint, tsconfig, tailwind configs
-│   ├── auth/                   shared auth logic (placeholder for now)
-│   ├── db/                     Drizzle ORM schemas and client
-│   └── rate-limit/             shared abuse protection utilities
+│   ├── auth/                   shared auth logic (placeholder, deferred to v2)
+│   ├── data/                   DynamoDB client + repositories (replaces db/)
+│   └── rate-limit/             shared abuse protection utilities (deferred to v2)
 ├── infra/                      SST v3 (Ion) infrastructure definitions
-├── .cursorrules
 ├── CLAUDE.md
 ├── turbo.json
 ├── pnpm-workspace.yaml
@@ -57,24 +96,28 @@ agency-platform/
 - Export via `./components/*` pattern (no barrel file to keep tree-shaking clean)
 - Package name: `@repo/ui`
 
-**packages/db/**
-- Drizzle ORM + drizzle-kit setup
-- Postgres dialect (targeting Aurora Serverless v2 / Neon)
-- Include a schema/index.ts placeholder with a sample `users` table
-- Include drizzle.config.ts using DATABASE_URL from env
-- Export a `createDbClient(connectionString)` factory function
-- Package name: `@repo/db`
+**packages/data/**
+- AWS SDK v3 `DynamoDBDocumentClient` for all storage access
+- Export `createDataClient()` (document client factory) plus client-injected typed
+  repository functions: `saveSubmission(dataClient, input)` and
+  `listSubmissions(dataClient, limit?)`
+- DynamoDB is schema-less: the record shape lives as a TypeScript type, with a
+  single `submissions` table (primary key: submission id)
+- The Lambda handler in infra/ imports this package
+- Package name: `@repo/data`
 
 **packages/auth/**
 - Placeholder package with README explaining intent
 - Package name: `@repo/auth`
 - Empty index.ts exporting a TODO comment
+- Not imported by any app in v1 (deferred to v2)
 
 **packages/rate-limit/**
 - Placeholder for now, but scaffold with intended interface:
   export async function checkRateLimit(identifier: string, limit: number, windowMs: number)
 - Include comment noting this will be backed by DynamoDB or ElastiCache
 - Package name: `@repo/rate-limit`
+- Not imported by any app in v1 (deferred to v2)
 
 ### Root Configuration Files
 
@@ -87,7 +130,7 @@ Configure proper dependsOn graphs and outputs. Use remote caching-ready format.
 
 **.gitignore** covers Node, Turbo, Next.js, SST, AWS, IDE files, .env variants
 
-**.cursorrules** file with:
+**CLAUDE.md** file with:
 - Project overview (Turborepo monorepo, AWS/SST deployment)
 - Enforce: pnpm not npm/yarn, workspace protocol for internal deps (workspace:*)
 - Enforce: all shared code lives in packages/, no cross-app imports
@@ -95,9 +138,6 @@ Configure proper dependsOn graphs and outputs. Use remote caching-ready format.
 - Enforce: server-only code uses "server-only" package marker
 - Enforce: Zod for all external data validation
 - File naming: kebab-case for files, PascalCase for React components
-
-**CLAUDE.md** file with:
-- Same rules as .cursorrules but formatted as Claude Code instructions
 - Include a "Common Commands" section (pnpm dev, pnpm build, etc.)
 - Include a "When adding a new application" checklist
 - Include architecture diagram in ASCII
@@ -135,7 +175,7 @@ Configure proper dependsOn graphs and outputs. Use remote caching-ready format.
 Begin by proposing the exact file tree you will create, then wait for my 
 approval before writing files.
 
-# Phase 2 (v2): Marketing Site (apps/web) Setup — Next.js 16
+# Phase 2 (v1): Marketing Site (apps/web) — Next.js 16
 
 You are now building `apps/web` — the main marketing website for our software 
 agency, deployed to agency.com. The monorepo foundation is already in place 
@@ -143,8 +183,8 @@ agency, deployed to agency.com. The monorepo foundation is already in place
 
 ## OBJECTIVE
 Create a production-grade Next.js 16 marketing site inside apps/web/ that:
-- Presents Silicon Software as a software agency whose first product is Intelligent Briefing
-- Leaves room for future products, AI tools, and AI sovereignty services
+- Presents Silicon Software as a software agency whose product is Intelligent Briefing, shown as a mocked preview
+- Future products, AI tools, and AI sovereignty services are vision only — nothing beyond Intelligent Briefing is built in v1
 - Consumes shared packages from @repo/*
 - Uses Static Site Generation (SSG) as the DEFAULT rendering strategy
 - Is ready for AWS deployment (SST v3 setup comes later)
@@ -158,11 +198,13 @@ Create a production-grade Next.js 16 marketing site inside apps/web/ that:
 - shadcn/ui components (via @repo/ui, extend locally as needed)
 - next-themes for dark mode
 - lucide-react for icons (already in @repo/ui)
+- AWS SDK v3 (DynamoDB) — used inside the submissions Lambda via @repo/data
 
 ## EXPLICITLY NOT USING (and why)
 - ❌ react-hook-form — Server Actions + useActionState + useFormStatus is idiomatic Next 16
 - ❌ MDX or Contentlayer — the blog is deferred until real content exists
 - ❌ Any client-side form libraries
+- ❌ Drizzle ORM / drizzle-kit / direct DB access — all storage goes through the Lambda-backed API to DynamoDB
 
 ## RENDERING STRATEGY (CRITICAL)
 
@@ -260,10 +302,13 @@ Use the Next.js 16 idiomatic pattern:
 - Extract fields from FormData
 - Validate the submission with Zod (name required + minLength 2, email required,
   message required + minLength 10, company optional, budget from enum list)
-- IMPORTANT: Import checkRateLimit from @repo/rate-limit and rate-limit by IP 
-  (get IP from headers() — use next/headers)
+- IMPORTANT: No rate limiting in v1 — @repo/rate-limit is deferred and must NOT be
+  imported here
+- Persist the submission by POSTing to the internal submissions API; the URL comes
+  from the SST `Resource` binding (e.g. `Resource.Api.url`), never from env or a
+  hardcoded value
 - Return typed FormState: { success, message, errors?: Record<string, string[]> }
-- On success, log the submission (email integration comes later)
+- On success, log the submission and confirm the API write (email integration comes later)
 - Never trust HTML5 validation alone — validate everything server-side
 
 **src/components/forms/qualification-form.tsx** ('use client'):
@@ -311,7 +356,7 @@ future possibilities, not current features.
 
 **Qualification page:** Static shell + qualification form. Fields: name, email,
 company (optional), project type (select), budget range (select), message. A Silicon
-Software operator reviews submissions stored in Postgres and manually emails
+Software operator reviews submissions stored in DynamoDB and manually emails
 suitable prospects a booking link; there is no email notification, admin portal, or
 automated scheduling workflow.
 
@@ -345,9 +390,31 @@ automated scheduling workflow.
 - Import Button, Card, Input, Label from @repo/ui
 - Web-specific components live in src/components/
 - If a new primitive is needed in multiple apps, add it to @repo/ui (ask me first)
-- Use @repo/rate-limit in the qualification Server Action
+- Use @repo/data (DynamoDB client + repositories) inside the submissions Lambda in infra/
+- @repo/auth and @repo/rate-limit are NOT imported anywhere in v1 (deferred to v2)
 - No cross-app imports (never import from apps/*)
 
 ## ENVIRONMENT VARIABLES
 
 Define and validate environment variables in src/lib/env.ts using Zod.
+
+Infrastructure values (API URL, table name) come from SST `Resource` bindings, not
+environment variables. There is no `DATABASE_URL` in v1.
+
+# Phase 3 (v1): AWS Serverless Infrastructure (infra/)
+
+Wire up the standard serverless shape with SST v3 (Ion): Next.js site on Lambda,
+API Gateway + Lambda for the form write, and DynamoDB for storage.
+
+- `Nextjs("Web", { path: "apps/web" })` — the marketing site (static pages + the qualification Server Action)
+- `Table("Submissions", { fields: { id: "string", createdAt: "number" }, primaryIndex: { partitionKey: "id" } })` — DynamoDB
+- `Api("Api", { routes: { "POST /submissions": "infra/functions/submissions.create" } })` — HTTP API + Lambda
+- The web app calls the API via `Resource.Api.url` — no DB credentials in the app bundle
+
+**infra/functions/submissions.ts** (Lambda handler):
+- `create(event)` — Zod-validate the JSON body, `saveSubmission(...)` via @repo/data, return 201
+- `list(event)` — `listSubmissions(...)`, return items (used later by the operator's triage view; not wired to any page in v1)
+
+Deployment notes:
+- Local dev: `pnpm --filter infra dev`; deploy: `pnpm --filter infra deploy`
+- IAM: the Lambda gets scoped read/write on the submissions table automatically from the `Table` binding

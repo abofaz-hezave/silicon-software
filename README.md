@@ -41,8 +41,8 @@ agency-platform/
 ├── packages/
 │   ├── ui/            # Shared shadcn/ui React components
 │   ├── config/        # Shared ESLint, TypeScript, and Tailwind configs
-│   ├── auth/          # Shared authentication logic
-│   ├── db/            # Drizzle ORM schemas and database client
+│   ├── auth/          # Shared authentication logic (placeholder)
+│   ├── data/          # DynamoDB client + submission repositories
 │   └── rate-limit/    # Shared rate limiting / abuse protection
 ├── infra/             # SST v3 (Ion) infrastructure definitions
 ├── turbo.json         # Turborepo task configuration
@@ -51,59 +51,49 @@ agency-platform/
 
 ### Packages
 
-| Package | Name | Description |
-|---------|------|-------------|
-| `packages/ui` | `@repo/ui` | Framework-agnostic React 19 components built with shadcn/ui |
-| `packages/config` | `@repo/config` | Shared ESLint, TypeScript, and Tailwind CSS configurations |
-| `packages/db` | `@repo/db` | Drizzle ORM schemas and typed database client (Postgres) |
-| `packages/auth` | `@repo/auth` | Shared authentication logic (placeholder) |
-| `packages/rate-limit` | `@repo/rate-limit` | Rate limiting utilities for abuse protection (placeholder) |
+| Package               | Name               | Description                                                            |
+| --------------------- | ------------------ | ---------------------------------------------------------------------- |
+| `packages/ui`         | `@repo/ui`         | Framework-agnostic React 19 components built with shadcn/ui            |
+| `packages/config`     | `@repo/config`     | Shared ESLint, TypeScript, and Tailwind CSS configurations             |
+| `packages/data`       | `@repo/data`       | DynamoDB client (`createDataClient`) and typed submission repositories |
+| `packages/auth`       | `@repo/auth`       | Shared authentication logic (placeholder)                              |
+| `packages/rate-limit` | `@repo/rate-limit` | Rate limiting utilities for abuse protection (placeholder)             |
 
 ## Tech Stack
 
 - **Monorepo**: Turborepo + pnpm workspaces
 - **Language**: TypeScript 5.5+ (strict mode)
 - **UI**: React 19, shadcn/ui, Tailwind CSS v4
-- **Database**: Drizzle ORM, PostgreSQL (Neon / Aurora Serverless v2)
+- **Storage**: DynamoDB via AWS SDK v3 (behind a Lambda-backed API)
 - **Infrastructure**: SST v3 (Ion) on AWS
 - **Linting**: ESLint 9 (flat config), Prettier
-- **Testing**: Vitest (unit), Playwright (E2E)
 
 ## Scripts Reference
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start all apps in development mode |
-| `pnpm build` | Build all apps and packages |
-| `pnpm type-check` | Run TypeScript type checking |
-| `pnpm lint` | Lint all packages |
-| `pnpm format` | Format all files with Prettier |
-| `pnpm clean` | Remove all build artifacts |
-| `pnpm skills:validate` | Validate skill metadata frontmatter |
-| `pnpm skills:links` | Validate relative markdown links in skills |
+| Command                | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `pnpm dev`             | Start all apps in development mode         |
+| `pnpm build`           | Build all apps and packages                |
+| `pnpm type-check`      | Run TypeScript type checking               |
+| `pnpm lint`            | Lint all packages                          |
+| `pnpm format`          | Format all files with Prettier             |
+| `pnpm clean`           | Remove all build artifacts                 |
+| `pnpm skills:validate` | Validate skill metadata frontmatter        |
+| `pnpm skills:links`    | Validate relative markdown links in skills |
 
 ## Available Skills
 
-A curated catalog of agent skills is available in the `skills/` directory:
+Agent skills live in `.agents/skills/`. Validate skill metadata and links with:
 
-### Development & Workflow
-- [code-review](file:///Users/paul/Desktop/project/silicon-software/skills/code-review) — Evidence-bound generic and plan-backed reviews.
-- [create-plan](file:///Users/paul/Desktop/project/silicon-software/skills/create-plan) — Research, plan, review, and construct execution plans.
-- [decomplex](file:///Users/paul/Desktop/project/silicon-software/skills/decomplex) — Audit, prevention, and triage of unnecessary complexity.
-- [implement-plan](file:///Users/paul/Desktop/project/silicon-software/skills/implement-plan) — Bounded checklist execution loop with verification.
-- [web-research](file:///Users/paul/Desktop/project/silicon-software/skills/web-research) — Perform research with search, retrieval, and document context.
-
-### Agency Client Tools
-- [create-slides](file:///Users/paul/Desktop/project/silicon-software/skills/create-slides) — Build and style HTML slides from structural templates.
-- [explain](file:///Users/paul/Desktop/project/silicon-software/skills/explain) — Generate explanations in Markdown and standalone offline HTML.
-
-### Custom Skill Authoring
-- [create-skill](file:///Users/paul/Desktop/project/silicon-software/skills/create-skill) — Author, refine, and validate custom Agent Skills.
+```bash
+pnpm skills:validate   # Validate skill metadata frontmatter
+pnpm skills:links      # Validate relative markdown links in skills
+```
 
 ## Contributing
 
 1. Create a feature branch from `main`.
-2. Make your changes following the conventions in `.cursorrules`.
+2. Make your changes following the conventions in `CLAUDE.md`.
 3. Ensure `pnpm build && pnpm type-check && pnpm lint` pass.
 4. Open a pull request with a clear description.
 

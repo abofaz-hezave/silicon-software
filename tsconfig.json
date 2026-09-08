@@ -1,21 +1,11 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "composite": false,
-    "incremental": true
-  },
-  "exclude": ["node_modules", "dist", ".next", ".turbo"]
+  "files": [],
+  "references": [
+    { "path": "./packages/config" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/auth" },
+    { "path": "./packages/data" },
+    { "path": "./packages/rate-limit" },
+    { "path": "./infra" }
+  ]
 }
