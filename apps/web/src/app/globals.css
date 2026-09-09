@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+@import '@repo/ui/tailwind.css';
+@config '../../tailwind.config.ts';
+
+@layer base {
+  :root {
+    --font-sans: var(--font-inter), system-ui, sans-serif;
+    --font-display: var(--font-geist), system-ui, sans-serif;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
