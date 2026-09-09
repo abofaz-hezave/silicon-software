@@ -3,6 +3,9 @@ import Link from 'next/link';
 
 import { mainNavigation } from '@/lib/site-navigation';
 
+import { MobileMenu } from './mobile-menu';
+import { ThemeToggle } from './theme-toggle';
+
 function Navbar() {
   return (
     <header className="border-border/70 bg-background/90 sticky top-0 z-50 border-b backdrop-blur-xl">
@@ -14,16 +17,20 @@ function Navbar() {
         >
           Silicon Software
         </Link>
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
-          {mainNavigation.map((item) => (
-            <Button key={item.href} asChild variant="ghost" size="sm">
-              <Link href={item.href}>{item.label}</Link>
-            </Button>
-          ))}
-        </nav>
-        <Button asChild size="sm">
-          <Link href="/qualification">Start a conversation</Link>
-        </Button>
+        <div className="hidden items-center gap-2 lg:flex">
+          <nav className="flex items-center gap-1" aria-label="Main navigation">
+            {mainNavigation.map((item) => (
+              <Button key={item.href} asChild variant="ghost" size="sm">
+                <Link href={item.href}>{item.label}</Link>
+              </Button>
+            ))}
+          </nav>
+          <ThemeToggle />
+          <Button asChild size="sm">
+            <Link href="/qualification">Start a conversation</Link>
+          </Button>
+        </div>
+        <MobileMenu />
       </div>
     </header>
   );

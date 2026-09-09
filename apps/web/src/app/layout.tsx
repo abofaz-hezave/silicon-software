@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
 
+import { ThemeProvider } from '@/components/layout/theme-toggle';
 import { env } from '@/lib/env';
 
 import './globals.css';
@@ -34,9 +35,9 @@ type RootLayoutProps = Readonly<{
 
 function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${geist.variable} [font-family:var(--font-inter)]`}>
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
