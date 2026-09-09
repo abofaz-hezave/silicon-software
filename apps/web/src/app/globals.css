@@ -1,0 +1,25 @@
+@config "../../tailwind.config.ts";
+@import '@repo/ui/tailwind.css';
+@source "../../../../packages/ui/src";
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground min-h-screen antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+}
+
+.font-display {
+  font-family: var(--font-geist), sans-serif;
+}

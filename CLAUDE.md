@@ -87,7 +87,7 @@ pnpm skills:links                    # Validate relative markdown links in skill
 
 - **pnpm only** — never use npm or yarn.
 - **workspace:\*** protocol for all internal deps.
-- **Named exports** over default exports for components.
+- **Named exports** for components; use default exports only for framework-required entrypoints.
 - **No cross-app imports** — shared code goes in `packages/`.
 - **Server-only code** must import `"server-only"` package.
 - **Zod** for all external data validation.

@@ -4,13 +4,13 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] The Next.js 16 marketing app builds and renders a static homepage with a realistic headline, supporting copy, and working qualification and product-preview calls to action
-- [ ] The shared marketing layout provides an accessible desktop navbar with every main public route and a footer on the homepage
-- [ ] Tailwind design tokens and shared UI primitives come from the monorepo packages rather than being duplicated locally
-- [ ] Inter body text and Geist display text are self-hosted through the framework font integration
-- [ ] Cache Components and React Compiler are enabled while static generation remains the default rendering strategy
-- [ ] Styled not-found and error experiences use the same visual system
-- [ ] Public environment variables are validated with Zod, while infrastructure values are reserved for SST resource bindings
-- [ ] The app passes its build, type-check, and lint tasks
+- [x] The Next.js 16 marketing app builds and renders a static homepage with a realistic headline, supporting copy, and working qualification and product-preview calls to action
+- [x] The shared marketing layout provides an accessible desktop navbar with every main public route and a footer on the homepage
+- [x] Tailwind design tokens and shared UI primitives come from the monorepo packages rather than being duplicated locally
+- [x] Inter body text and Geist display text are self-hosted through the framework font integration
+- [x] Cache Components and React Compiler are enabled while static generation remains the default rendering strategy
+- [x] Styled not-found and error experiences use the same visual system
+- [x] Public environment variables are validated with Zod, while infrastructure values are reserved for SST resource bindings
+- [x] The app passes its build, type-check, and lint tasks
