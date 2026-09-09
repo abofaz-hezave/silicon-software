@@ -9,6 +9,7 @@ build/
 .turbo/
 .sst/
 *.tsbuildinfo
+next-env.d.ts
 
 # Environmental Variables
 .env
