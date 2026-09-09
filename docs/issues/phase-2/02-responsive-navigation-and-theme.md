@@ -4,10 +4,10 @@
 
 **Blocked by:** 01 (Launch the marketing shell and homepage hero)
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] A keyboard-accessible mobile menu exposes the same destinations as the desktop navigation and closes predictably after navigation
-- [ ] The theme control supports light, dark, and system preference, defaults to system, and persists the visitor’s choice
-- [ ] Theme hydration does not produce visible mismatch warnings or an incorrect initial theme flash
-- [ ] Only the mobile menu and theme control introduce client-side component boundaries for this behavior
-- [ ] Navigation and theme controls remain usable at mobile and desktop breakpoints
+- [x] A keyboard-accessible mobile menu exposes the same destinations as the desktop navigation and closes predictably after navigation
+- [x] The theme control supports light, dark, and system preference, defaults to system, and persists the visitor’s choice
+- [x] Theme hydration does not produce visible mismatch warnings or an incorrect initial theme flash
+- [x] Only the mobile menu and theme control introduce client-side component boundaries for this behavior
+- [x] Navigation and theme controls remain usable at mobile and desktop breakpoints
