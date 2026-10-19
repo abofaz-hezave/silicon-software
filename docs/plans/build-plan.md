@@ -17,8 +17,8 @@ is deferred. Concretely:
 - **Standard AWS serverless architecture**: compute is Lambda functions behind API
   Gateway; storage is DynamoDB. No Drizzle ORM, no drizzle-kit, no direct Postgres
   connections from the app.
-- **Infrastructure as code**: AWS CDK v2 with TypeScript defines the AWS resources
-  and synthesizes them to CloudFormation.
+- **Infrastructure as code**: SST v3 (Ion) with TypeScript defines and deploys the
+  AWS resources.
 
 ### AWS architecture (v1)
 
@@ -34,9 +34,10 @@ Browser ──► Route 53 ──► CloudFront
                                                         └─► DynamoDB
 ```
 
-ACM provides the CloudFront TLS certificate. OpenNext packages the Next.js output
-for S3, CloudFront, and Lambda; AWS CDK provisions those resources plus Route 53,
-ACM, API Gateway, the submissions Lambda, DynamoDB, IAM, and observability.
+ACM provides the CloudFront TLS certificate. The SST `Nextjs` component packages the
+Next.js output with OpenNext for S3, CloudFront, and Lambda; SST provisions those
+resources plus Route 53, ACM, API Gateway, the submissions Lambda, DynamoDB, IAM, and
+observability.
 
 **Storing form data: DynamoDB.** It is the best fit for a serverless form in v1:
 schema-less (no migrations — this removes the need for drizzle-kit), pay-per-use
@@ -53,7 +54,7 @@ connection management).
 You are setting up a production-grade Turborepo monorepo for a software agency
 platform. This monorepo will host the Silicon Software marketing website, the
 Intelligent Briefing AI product, and shared packages. Deployment target is AWS via
-AWS CDK v2 and CloudFormation.
+SST v3 (Ion).
 
 ## OBJECTIVE
 
@@ -80,7 +81,7 @@ agency-platform/
 │ ├── auth/ shared auth logic (placeholder, deferred to v2)
 │ ├── data/ DynamoDB client + repositories (replaces db/)
 │ └── rate-limit/ shared abuse protection utilities (deferred to v2)
-├── infra/ AWS CDK v2 TypeScript application and Lambda handlers
+├── infra/ SST v3 resource modules and Lambda handlers
 ├── CLAUDE.md
 ├── turbo.json
 ├── pnpm-workspace.yaml
@@ -146,11 +147,11 @@ Configure proper dependsOn graphs and outputs. Use remote caching-ready format.
 
 **tsconfig.json (root)** references all packages via project references
 
-**.gitignore** covers Node, Turbo, Next.js, AWS CDK, OpenNext, AWS, IDE files, .env variants
+**.gitignore** covers Node, Turbo, Next.js, SST (`.sst`), OpenNext, AWS, IDE files, .env variants
 
 **CLAUDE.md** file with:
 
-- Project overview (Turborepo monorepo, AWS CDK/CloudFormation deployment)
+- Project overview (Turborepo monorepo, SST v3 deployment)
 - Enforce: pnpm not npm/yarn, workspace protocol for internal deps (workspace:*)
 - Enforce: all shared code lives in packages/, no cross-app imports
 - Enforce: named exports over default exports for components
@@ -190,7 +191,7 @@ Configure proper dependsOn graphs and outputs. Use remote caching-ready format.
 
 - Do NOT create any apps in apps/ yet
 - Do NOT install shadcn components beyond the four listed
-- Do NOT configure AWS CDK or OpenNext yet (that comes in Phase 3)
+- Do NOT configure SST or OpenNext yet (that comes in Phase 3)
 - Do NOT create GitHub Actions yet
 - Ask me before installing any dependency not explicitly listed above
 - If any decision is ambiguous, pause and ask rather than guessing
@@ -212,7 +213,7 @@ Create a production-grade Next.js 16 marketing site inside apps/web/ that:
 - Future products, AI tools, and AI sovereignty services are vision only — nothing beyond Intelligent Briefing is built in v1
 - Consumes shared packages from @repo/*
 - Uses Static Site Generation (SSG) as the DEFAULT rendering strategy
-- Is ready for AWS deployment (AWS CDK and OpenNext setup comes in Phase 3)
+- Is ready for AWS deployment (SST and OpenNext setup comes in Phase 3)
 - Ships with zero unnecessary dependencies
 
 ## TECH STACK
@@ -337,7 +338,7 @@ Use the Next.js 16 idiomatic pattern:
 - IMPORTANT: No rate limiting in v1 — @repo/rate-limit is deferred and must NOT be
   imported here
 - Persist the submission by POSTing to the submissions API; read its URL from the
-  server-only `SUBMISSIONS_API_URL` environment variable injected by the CDK stack,
+  server-only `SUBMISSIONS_API_URL` environment variable injected by the SST configuration,
   never from a public `NEXT_PUBLIC_*` variable or a hardcoded value
 - Return typed FormState: { success, message, errors?: Record<string, string[]> }
 - On success, log the submission and confirm the API write (email integration comes later)
@@ -437,92 +438,112 @@ automated scheduling workflow.
 
 Define and validate environment variables in src/lib/env.ts using Zod.
 
-Infrastructure values are injected by CDK into the runtimes that need them:
+Infrastructure values are injected by SST into the runtimes that need them:
 
-- `SUBMISSIONS_API_URL` is available only to the OpenNext server Lambda and is read
+- `SUBMISSIONS_API_URL` is available only to the Next.js server Lambda and is read
   by the qualification Server Action.
 - `SUBMISSIONS_TABLE_NAME` is available only to the submissions Lambda.
 - Neither value uses a `NEXT_PUBLIC_*` name; there is no `DATABASE_URL` in v1.
 
 # Phase 3 (v1): AWS Serverless Infrastructure (infra/)
 
-Provision the v1 architecture with **AWS CDK v2 in TypeScript**. CDK is the
-infrastructure interface and CloudFormation performs deployments. OpenNext packages
-the Next.js application for Lambda, S3, and CloudFront; the OpenNext-to-CDK
-integration is community-maintained rather than an AWS CDK native construct.
+Provision the v1 architecture with **SST v3 (Ion) in TypeScript**. SST is the
+infrastructure interface; it uses Pulumi/Terraform providers underneath and stores
+its state in the target AWS account. The marketing site is deployed with the
+`sst.aws.Nextjs` component, which builds `apps/web` with OpenNext and provisions the
+S3 assets, CloudFront distribution, and server Lambda. The submissions API and table
+use SST's `ApiGatewayV2`, `Function`, and `Dynamo` components. Resources SST has no
+component for (CloudWatch alarms) are declared with the underlying Pulumi AWS
+provider.
 
 ## Compatibility gate
 
 Complete this gate before implementing the full stack:
 
-1. Pin exact versions of AWS CDK, the selected OpenNext CDK construct, and OpenNext.
-   Start with `open-next-cdk`; do not copy OpenNext's non-production reference
-   construct into this repository.
-2. Build `apps/web` with its current Next.js 16 configuration.
-3. Synthesize and deploy a disposable development stack.
+1. Pin the exact `sst` version (no version range) and set `openNextVersion` on
+   `sst.aws.Nextjs` explicitly rather than relying on auto-detection.
+2. Align the Next.js version with the pinned OpenNext peer range (currently
+   `>=15.5.28 <16 || >=16.4.1`); the locked `next@16.3.4` is outside it, so upgrade
+   `apps/web` to a supported 16.x release and rebuild it with its current
+   configuration (`cacheComponents`, React Compiler, `transpilePackages`).
+3. Deploy a disposable development stage with `sst deploy --stage <dev-stage>`.
 4. Verify static routes, the qualification Server Action, `cacheComponents`,
-   `next/image`, static asset caching, and a second deployment with cache invalidation.
-5. Record the verified version combination in `infra/package.json`.
+   `next/image`, static asset caching, a second deployment that serves the new
+   version without stale content, and that App Router prefetch requests do not loop
+   (SST issue #6969: the CloudFront cache key omitted
+   `next-router-segment-prefetch` on Next 16 prerendered routes). If the pinned SST
+   version still has this defect, record it and apply a documented mitigation before
+   continuing.
+5. Record the verified `sst`, OpenNext, and Next.js versions together in
+   `infra/package.json`.
 
-The gate is complete only when those behaviors pass in AWS. If Next.js 16 is not
-supported by the pinned OpenNext integration, stop and present the concrete failure
-before choosing between a compatible version combination and CDK-managed ECS
-Fargate. Do not silently downgrade Next.js or switch compute models.
+The gate is complete only when those behaviors pass in AWS. If the pinned
+combination fails, stop and present the concrete failure before choosing between a
+compatible version combination and SST-managed containers (`sst.aws.Service` on ECS
+Fargate). Do not silently downgrade Next.js or switch compute models.
 
-## CDK application structure
+## SST application structure
 
-Use one CDK app with explicit stacks and constructs:
+`sst.config.ts` lives at the repository root, as SST requires, and imports the
+resource modules from `infra/` so each concern stays small:
 
 ```
+sst.config.ts
 infra/
-├── bin/infra.ts
-├── lib/application-stack.ts
-├── lib/edge-certificate-stack.ts
+├── config.ts
+├── storage.ts
+├── submissions.ts
+├── web.ts
+├── alarms.ts
 ├── functions/submissions.ts
-├── test/application-stack.test.ts
-├── cdk.json
 ├── package.json
 └── tsconfig.json
 ```
 
-- `EdgeCertificateStack` runs in `us-east-1` because CloudFront viewer certificates
-  must be issued there. It validates the certificate through the Route 53 hosted zone.
-- `ApplicationStack` runs in the selected application region and owns the web
-  deployment, HTTP API, submissions Lambda, DynamoDB table, DNS aliases, logs, and
-  alarms.
-- Configure CDK cross-region references deliberately and bootstrap both regions.
-- Read account, application region, stage, hosted-zone name, and domain name from
-  typed CDK context. Keep account IDs and domain configuration out of source defaults.
+- `config.ts` reads and Zod-validates deployment configuration (hosted-zone name,
+  domain name, owner, optional alarm notification topic ARN) from environment
+  variables. Keep account IDs, AWS profiles, and domain values out of source
+  defaults.
+- The AWS account comes from the active credentials/profile and the application
+  region from the `aws` provider configuration; the stage comes from `--stage`.
+- SST provisions the CloudFront viewer certificate in `us-east-1` and validates it
+  through the Route 53 hosted zone when the site's `domain` is configured with
+  `dns: sst.aws.dns()`, so no separate certificate stack is needed. SST bootstraps
+  each region it deploys to on first use; document this in the workflow.
+- Stage-aware behavior is derived from `$app.stage`: `production` sets
+  `removal: "retain"` and `protect: true`; all other stages use `removal: "remove"`.
 
 ## Next.js delivery
 
-Use the verified OpenNext CDK construct to deploy `apps/web`:
+Deploy `apps/web` with `new sst.aws.Nextjs("Web", { path: "apps/web", ... })`:
 
-- Upload immutable, versioned Next.js assets to a private S3 bucket.
-- Serve the application through CloudFront with HTTPS-only viewer behavior,
-  compression, and appropriate cache policies for static and dynamic routes.
-- Run dynamic Next.js behavior, including the qualification Server Action, in the
-  OpenNext server Lambda.
-- Inject `SUBMISSIONS_API_URL` into that server Lambda as a server-only environment
-  variable.
-- Attach the ACM certificate and create Route 53 `A` and `AAAA` alias records for the
-  CloudFront distribution.
-- Retain access to the generated CloudFront, S3, and Lambda constructs so CDK can add
-  observability and narrowly scoped configuration without granting database access to
-  the web runtime.
+- Static Next.js assets are uploaded to a private S3 bucket as immutable, versioned
+  files and served through CloudFront with HTTPS-only viewer behavior, compression,
+  and SST's static/dynamic cache policies.
+- Dynamic behavior, including the qualification Server Action, runs in the OpenNext
+  server Lambda.
+- Inject `SUBMISSIONS_API_URL` through the component's `environment` option, set to
+  the HTTP API URL. It is a server-only value and never uses a `NEXT_PUBLIC_*` name.
+  Do not use SST `link` for this value or for the table, and do not use the SST
+  `Resource` binding in application code.
+- Configure the custom domain with `domain: { name, dns: sst.aws.dns({ zone }) }`
+  so SST manages the certificate and the Route 53 alias records.
+- Do not link the DynamoDB table or add DynamoDB permissions to the web component.
 
 ## Submissions API and storage
 
-Create these resources with AWS CDK L2 constructs:
+Create these resources with SST components:
 
-- A DynamoDB on-demand table with string partition key `id`, AWS-managed encryption,
-  point-in-time recovery, and a production retention policy. `createdAt` is an item
-  attribute, not a key declaration.
+- `sst.aws.Dynamo` with string partition key `id`, on-demand billing, point-in-time
+  recovery, and AWS-managed encryption (configured through `transform.table` where
+  the component does not expose the setting). `createdAt` is an item attribute, not
+  a key declaration.
 - A bundled Node.js Lambda for `infra/functions/submissions.ts`, using the current
   supported Lambda Node.js runtime and importing `@repo/data`.
-- An API Gateway HTTP API with `POST /submissions` integrated with the Lambda.
-- Default-stage access logging and conservative stage throttling. CORS is unnecessary
-  in v1 because only the server-side action calls this API.
+- `sst.aws.ApiGatewayV2` with a single `POST /submissions` route integrated with that
+  function, default-stage access logs with finite retention, and conservative stage
+  throttling. CORS is unnecessary in v1 because only the server-side action calls
+  this API.
 
 **infra/functions/submissions.ts**:
 
@@ -537,41 +558,46 @@ Create these resources with AWS CDK L2 constructs:
 
 IAM must be least-privilege:
 
-- Inject `SUBMISSIONS_TABLE_NAME` into the submissions Lambda.
-- Grant that Lambda only the DynamoDB write operations required by
-  `saveSubmission` against this table.
-- Grant no DynamoDB permissions to the OpenNext server Lambda or browser bundle.
+- Inject `SUBMISSIONS_TABLE_NAME` into the submissions function through `environment`.
+- Grant that function only the DynamoDB write action required by `saveSubmission`
+  (`dynamodb:PutItem`) scoped to this table's ARN through the function's
+  `permissions` option. Do not use `link`, which grants broader table access.
+- Grant no DynamoDB permissions to the Next.js server Lambda or browser bundle.
 
 ## Operations and outputs
 
-- Set finite CloudWatch log retention for application Lambdas and API access logs.
-- Add CloudWatch alarms for Lambda errors/throttles, API 5xx responses, and DynamoDB
-  throttling; route alarm actions only when a notification destination is configured.
-- Output the CloudFront/domain URL, HTTP API URL, table name, and relevant log-group
-  names from CloudFormation.
-- Apply consistent tags for application, stage, owner, and cost allocation.
-- Use stage-aware removal policies: retain production data and allow disposable
-  development resources to be removed intentionally.
+- Set finite CloudWatch log retention for the submissions function, the Next.js
+  server function, and the API access logs.
+- Declare CloudWatch alarms with the Pulumi AWS provider in `infra/alarms.ts` for
+  Lambda errors/throttles (submissions and web server functions), API 5xx responses,
+  and DynamoDB throttling; attach alarm actions only when a notification topic ARN is
+  configured.
+- Return the site URL, HTTP API URL, table name, and relevant log-group names as
+  outputs from `sst.config.ts`.
+- Apply consistent tags for application, stage, owner, and cost allocation through the
+  AWS provider's default tags.
 
 ## Scripts and verification
 
-Add `@repo/infra` scripts for `build`, `type-check`, `test`, `synth`, `diff`, and
-`deploy`. Use pnpm only. The expected workflow is:
+Expose pnpm scripts for `type-check`, `test`, `diff`, `deploy`, and `remove` that
+wrap `sst diff`, `sst deploy`, and `sst remove` with an explicit `--stage`. Use pnpm
+only. The expected workflow is:
 
 ```bash
 pnpm --filter @repo/infra test
-pnpm --filter @repo/infra synth
 pnpm --filter @repo/infra diff
 pnpm --filter @repo/infra deploy
 ```
 
 Before Phase 3 is complete:
 
-- CDK assertion tests cover the DynamoDB key and billing mode, API route, Lambda
-  integration, scoped IAM grant, CloudFront distribution, TLS certificate, DNS
-  aliases, retention policies, logging, and alarms.
-- `pnpm build`, `pnpm type-check`, `pnpm lint`, and the CDK tests pass.
-- `cdk synth` produces valid CloudFormation without unresolved tokens or unbundled
-  handlers.
+- Handler tests cover successful persistence, missing and oversized bodies, malformed
+  JSON, Zod failures, unexpected storage failures, and log redaction.
+- `sst diff` for the development stage shows the expected resources, and the
+  deployed stack is checked (via the AWS CLI or console) for the table key and
+  billing mode, point-in-time recovery, API route and integration, the scoped IAM
+  policy, CloudFront distribution, certificate, DNS aliases, retention policies,
+  logging, alarms, and tags.
+- `pnpm build`, `pnpm type-check`, and `pnpm lint` pass.
 - A development deployment passes the compatibility-gate checks and a real form
   submission is confirmed in DynamoDB without exposing submission data in logs.
