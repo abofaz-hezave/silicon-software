@@ -2,7 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 export interface DataClientConfig {
-  /** DynamoDB table holding submissions. Defaults to `SUBMISSIONS_TABLE` env var, then `submissions`. */
+  /** DynamoDB table holding submissions. Defaults to `SUBMISSIONS_TABLE_NAME` env var, then `submissions`. */
   tableName?: string;
   /** AWS region. Defaults to the runtime region (`AWS_REGION`), then `us-east-1`. */
   region?: string;
@@ -25,13 +25,13 @@ export interface DataClient {
  * ```ts
  * import { createDataClient, saveSubmission } from '@repo/data';
  *
- * const data = createDataClient({ tableName: process.env.SUBMISSIONS_TABLE });
+ * const data = createDataClient({ tableName: process.env.SUBMISSIONS_TABLE_NAME });
  * await saveSubmission(data, { name: 'Ada', email: 'ada@example.com', message: '...' });
  * ```
  */
 export function createDataClient(config: DataClientConfig = {}): DataClient {
   const region = config.region ?? process.env.AWS_REGION ?? 'us-east-1';
-  const tableName = config.tableName ?? process.env.SUBMISSIONS_TABLE ?? 'submissions';
+  const tableName = config.tableName ?? process.env.SUBMISSIONS_TABLE_NAME ?? 'submissions';
   const client = DynamoDBDocumentClient.from(new DynamoDBClient({ region }));
   return { client, tableName };
 }
