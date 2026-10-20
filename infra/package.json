@@ -4,15 +4,36 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "echo 'No build step for infra yet'",
+    "build": "echo 'No build step for infra; sst.config.ts is type-checked by type-check'",
     "dev": "echo 'SST dev not configured yet'",
     "lint": "eslint . --max-warnings 0",
-    "type-check": "tsc --noEmit",
+    "type-check": "AWS_REGION=${AWS_REGION:-us-east-1} OWNER=${OWNER:-type-check} pnpm run install-sst && tsc --noEmit",
+    "test": "vitest run",
+    "install-sst": "cd .. && sst install",
+    "diff": "cd .. && sst diff --stage ${STAGE:?Set STAGE, e.g. STAGE=dev-yourname}",
+    "deploy": "cd .. && sst deploy --stage ${STAGE:?Set STAGE, e.g. STAGE=dev-yourname}",
+    "remove": "cd .. && sst remove --stage ${STAGE:?Set STAGE, e.g. STAGE=dev-yourname}",
     "clean": "rm -rf .turbo .sst"
   },
+  "verifiedVersions": {
+    "status": "candidate - not yet verified in AWS; compatibility gate requires a real deploy of a disposable dev stage",
+    "sst": "4.17.2",
+    "@opennextjs/aws": "4.1.9",
+    "next": "16.4.0"
+  },
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/lib-dynamodb": "^3.600.0",
+    "@pulumi/aws": "7.20.0",
+    "@pulumi/pulumi": "3.215.0",
     "@repo/config": "workspace:*",
+    "@repo/data": "workspace:*",
+    "@types/node": "^26.5.0",
     "eslint": "^9.0.0",
-    "typescript": "^5.5.0"
+    "sst": "4.17.2",
+    "typescript": "^5.5.0",
+    "vite": "7.3.7",
+    "vitest": "4.1.11",
+    "zod": "^4.0.0"
   }
 }
