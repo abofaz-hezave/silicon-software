@@ -12,4 +12,17 @@ export default defineConfig({
       'server-only': fileURLToPath(new URL('./test/server-only-stub.ts', import.meta.url)),
     },
   },
+  test: {
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        // Root layout is next/font/google and provider wiring only; OG image is next/og ImageResponse rendering. Framework glue with no app logic.
+        'src/app/layout.tsx',
+        'src/app/opengraph-image.tsx',
+      ],
+      thresholds: { lines: 90, statements: 90, functions: 90, branches: 90 },
+    },
+  },
 });

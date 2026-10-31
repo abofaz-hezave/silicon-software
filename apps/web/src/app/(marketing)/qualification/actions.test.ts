@@ -149,4 +149,41 @@ describe('submitQualification', () => {
     expect(logged).not.toContain(validValues.name);
     expect(logged).not.toContain(validValues.message);
   });
+
+  it('omits an empty company from the posted inquiry', async () => {
+    fetchMock.mockResolvedValue(new Response('{}', { status: 201 }));
+
+    await submitQualification(initialQualificationState, buildFormData({ company: '' }));
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(init.body as string)).toEqual({
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+      projectType: 'Scoped build',
+      budget: '€5,000 – €15,000',
+      message: 'We need a briefing tool for our client intake process.',
+    });
+  });
+
+  it('treats a non-text form entry as empty', async () => {
+    const formData = buildFormData();
+    formData.set('name', new File(['x'], 'x.txt'));
+
+    const state = await submitQualification(initialQualificationState, formData);
+
+    expect(state.success).toBe(false);
+    expect(state.errors?.name).toEqual(['Name is required.']);
+    expect(state.values?.name).toBe('');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('still reports success and logs without an id when the 201 body has no id', async () => {
+    const consoleInfo = vi.spyOn(console, 'info').mockImplementation(() => undefined);
+    fetchMock.mockResolvedValue(new Response('{}', { status: 201 }));
+
+    const state = await submitQualification(initialQualificationState, buildFormData());
+
+    expect(state).toEqual({ success: true, message: SUCCESS_MESSAGE, attempt: 1 });
+    expect(consoleInfo).toHaveBeenCalledWith({ event: 'qualification_submitted' });
+  });
 });
