@@ -115,11 +115,10 @@ agency-platform/
 **packages/data/**
 
 - AWS SDK v3 `DynamoDBDocumentClient` for all storage access
-- Export `createDataClient()` (document client factory) plus client-injected typed
-  repository functions: `saveSubmission(dataClient, input)` and
-  `listSubmissions(dataClient, limit?)`
+- Export `createInquiryIntake({ store, rateLimiter })` (`submit` and `list`) plus
+  `createDynamoInquiryStore()` (DynamoDB adapter)
 - DynamoDB is schema-less: the record shape lives as a TypeScript type, with a
-  single `submissions` table (primary key: submission id)
+  single table named by `SUBMISSIONS_TABLE_NAME` (primary key: inquiry id)
 - The Lambda handler in infra/ imports this package
 - Package name: `@repo/data`
 
@@ -548,7 +547,7 @@ Create these resources with SST components:
 **infra/functions/submissions.ts**:
 
 - Parse the API Gateway HTTP API event and reject missing or oversized bodies.
-- Zod-validate the JSON body, call `saveSubmission(...)` through `@repo/data`, and
+- Zod-validate the JSON body, call the intake module's `submit(...)` through `@repo/data`, and
   return a JSON `201` response.
 - Return controlled `400` responses for validation failures and a non-sensitive `500`
   response for unexpected failures.
@@ -559,7 +558,7 @@ Create these resources with SST components:
 IAM must be least-privilege:
 
 - Inject `SUBMISSIONS_TABLE_NAME` into the submissions function through `environment`.
-- Grant that function only the DynamoDB write action required by `saveSubmission`
+- Grant that function only the DynamoDB write action required by `submit(...)`
   (`dynamodb:PutItem`) scoped to this table's ARN through the function's
   `permissions` option. Do not use `link`, which grants broader table access.
 - Grant no DynamoDB permissions to the Next.js server Lambda or browser bundle.

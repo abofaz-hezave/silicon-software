@@ -11,11 +11,13 @@
     "dev": "tsc --build --watch",
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
+    "test": "vitest run",
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
     "eslint": "^9.0.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "vitest": "3.2.7"
   }
 }
