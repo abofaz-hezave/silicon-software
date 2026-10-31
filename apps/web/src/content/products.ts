@@ -9,12 +9,16 @@ export interface PreviewMessage {
 }
 
 export interface BriefingPreview {
+  windowTitle: string;
+  structuredLabel: string;
   fields: readonly BriefingPreviewField[];
   missingField: string;
   conversation: readonly PreviewMessage[];
 }
 
 export const intelligentBriefingPreview: BriefingPreview = {
+  windowTitle: 'briefing-assistant / sample',
+  structuredLabel: 'Structured briefing',
   fields: [
     { label: 'Project', value: 'Autumn campaign launch' },
     { label: 'Audience', value: 'Returning customers' },

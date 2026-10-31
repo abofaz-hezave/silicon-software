@@ -44,9 +44,7 @@ function BriefingWorkspace({ preview }: BriefingWorkspaceProps) {
         <span className="bg-muted size-2.5 rounded-full" aria-hidden="true" />
         <span className="bg-muted size-2.5 rounded-full" aria-hidden="true" />
         <span className="bg-muted size-2.5 rounded-full" aria-hidden="true" />
-        <span className="text-muted-foreground ml-3 font-mono text-xs">
-          briefing-assistant / sample
-        </span>
+        <span className="text-muted-foreground ml-3 font-mono text-xs">{preview.windowTitle}</span>
       </div>
       <div className="grid md:grid-cols-[1.05fr_0.95fr]">
         <div className="flex flex-col gap-3 border-b p-4 md:border-b-0 md:border-r">
@@ -62,7 +60,7 @@ function BriefingWorkspace({ preview }: BriefingWorkspaceProps) {
         </div>
         <div className="p-4">
           <div className="flex items-center justify-between gap-3">
-            <Tag>Structured briefing</Tag>
+            <Tag>{preview.structuredLabel}</Tag>
             <span className="text-muted-foreground font-mono text-[11px]">{captured}</span>
           </div>
           <dl className="mt-4 divide-y text-sm">

@@ -8,6 +8,8 @@ describe('BriefingWorkspace', () => {
     const html = renderToStaticMarkup(
       <BriefingWorkspace
         preview={{
+          windowTitle: 'briefing-assistant / sample',
+          structuredLabel: 'Structured briefing',
           fields: [
             { label: 'Project', value: 'Autumn campaign launch' },
             { label: 'Audience', value: 'Returning customers' },
@@ -18,6 +20,8 @@ describe('BriefingWorkspace', () => {
       />,
     );
 
+    expect(html).toContain('briefing-assistant / sample');
+    expect(html).toContain('Structured briefing');
     expect(html).toContain('>Project</dt>');
     expect(html).toContain('>Autumn campaign launch</dd>');
     expect(html).toContain('>Audience</dt>');
@@ -31,6 +35,8 @@ describe('BriefingWorkspace', () => {
     const html = renderToStaticMarkup(
       <BriefingWorkspace
         preview={{
+          windowTitle: 'briefing-assistant / sample',
+          structuredLabel: 'Structured briefing',
           fields: [],
           missingField: 'Budget',
           conversation: [
