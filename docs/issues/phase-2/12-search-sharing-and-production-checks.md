@@ -6,11 +6,11 @@
 
 **Status:** ready-for-agent
 
-- [ ] The sitemap lists every public static route, including qualification, Privacy, and Terms
-- [ ] Robots rules allow crawling only in production and disallow crawling in every other environment
-- [ ] Every public route has a unique title and description, an absolute canonical URL, and social metadata using the approved placeholder image
-- [ ] The homepage exposes valid Organization structured data
-- [ ] All content pages are statically generated; only qualification submission executes dynamically
-- [ ] All images and fonts use framework optimization, and no manual memoization or unapproved animation dependency is introduced
-- [ ] Client component boundaries are limited to mobile navigation, theme switching, qualification form state, and form submission status
+- [x] The sitemap lists every public static route, including qualification, Privacy, and Terms
+- [x] Robots rules allow crawling only in production and disallow crawling in every other environment
+- [x] Every public route has a unique title and description, an absolute canonical URL, and social metadata using the approved placeholder image
+- [x] The homepage exposes valid Organization structured data
+- [x] All content pages are statically generated; only qualification submission executes dynamically
+- [x] All images and fonts use framework optimization, and no manual memoization or unapproved animation dependency is introduced
+- [x] Client component boundaries are limited to mobile navigation, theme switching, qualification form state, and form submission status
 - [ ] Production build, type-check, lint, and formatting checks pass, and the primary pages meet the stated Lighthouse target

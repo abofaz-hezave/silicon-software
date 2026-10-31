@@ -1,23 +1,40 @@
 import { z } from 'zod';
 
 /**
- * Budget bands offered on the qualification form. Values are display strings;
+ * Project types offered on the qualification form. Values are display strings;
+ * adjust here if the marketing site's enum changes.
+ */
+export const PROJECT_TYPE_OPTIONS = [
+  'Intelligent Briefing customization',
+  'Paid discovery',
+  'Scoped build',
+  'Ongoing product retainer',
+  'Not sure yet',
+] as const;
+
+/**
+ * Budget bands offered on the qualification form, in EUR. Values are display strings;
  * adjust here if the marketing site's enum changes.
  */
 export const BUDGET_OPTIONS = [
-  'Under $5k',
-  '$5k – $10k',
-  '$10k – $25k',
-  '$25k+',
+  'Under €2,500',
+  '€2,500 – €5,000',
+  '€5,000 – €15,000',
+  '€15,000+',
   'Not sure yet',
 ] as const;
 
 export const qualifiedInquiryInputSchema = z.object({
-  name: z.string().min(2, 'Name is required.'),
-  email: z.email('Enter a valid email address.'),
-  company: z.string().optional(),
-  budget: z.enum(BUDGET_OPTIONS).optional(),
-  message: z.string().min(10, 'Please add a bit more detail (at least 10 characters).'),
+  name: z.string().trim().min(2, 'Name is required.').max(100, 'Name is too long.'),
+  email: z.string().trim().pipe(z.email('Enter a valid email address.')),
+  company: z.string().trim().max(200, 'Company name is too long.').optional(),
+  projectType: z.enum(PROJECT_TYPE_OPTIONS, { error: 'Choose a project type.' }),
+  budget: z.enum(BUDGET_OPTIONS, { error: 'Choose a budget range.' }),
+  message: z
+    .string()
+    .trim()
+    .min(10, 'Please add a bit more detail (at least 10 characters).')
+    .max(5000, 'Message is too long.'),
 });
 
 export type QualifiedInquiryInput = z.infer<typeof qualifiedInquiryInputSchema>;

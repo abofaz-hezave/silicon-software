@@ -4,10 +4,10 @@
 
 **Blocked by:** 01 (Launch the marketing shell and homepage hero)
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] The homepage presents a server-rendered services overview that describes Intelligent Briefing customization without implying additional products already exist
-- [ ] A server-rendered Intelligent Briefing showcase links to the product page and describes the preview as anonymous fixed sample content
-- [ ] Services and product metadata live in typed content modules rather than being embedded throughout presentation components
-- [ ] The new sections are responsive, accessible, and use shared UI primitives where applicable
+- [x] The homepage presents a server-rendered services overview that describes Intelligent Briefing customization without implying additional products already exist
+- [x] A server-rendered Intelligent Briefing showcase links to the product page and describes the preview as anonymous fixed sample content
+- [x] Services and product metadata live in typed content modules rather than being embedded throughout presentation components
+- [x] The new sections are responsive, accessible, and use shared UI primitives where applicable
 - [ ] The homepage remains fully static and introduces no client component

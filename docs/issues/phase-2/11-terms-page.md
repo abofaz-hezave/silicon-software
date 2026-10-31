@@ -4,8 +4,8 @@
 
 **Blocked by:** 01 (Launch the marketing shell and homepage hero)
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] The terms distinguish the non-production product preview from separately contracted customization work
-- [ ] The copy does not promise customer workspaces, collaboration, approval, versioning, automated scheduling, or downstream workflow
-- [ ] The route is fully static, responsive, available from the shared site chrome, and has accurate title, description, and canonical metadata
+- [x] The terms distinguish the non-production product preview from separately contracted customization work
+- [x] The copy does not promise customer workspaces, collaboration, approval, versioning, automated scheduling, or downstream workflow
+- [x] The route is fully static, responsive, available from the shared site chrome, and has accurate title, description, and canonical metadata

@@ -4,11 +4,11 @@
 
 **Blocked by:** 03 (Present services and Intelligent Briefing on the homepage)
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] Technical evidence communicates concrete agency capability without unsupported claims
-- [ ] Delivery process and founder background explain who delivers the work and how an engagement progresses
-- [ ] The closing call to action leads to the qualification page
-- [ ] Frequently asked questions state that the product preview accepts no visitor data and that briefing creation is the current product boundary
-- [ ] Reusable content is typed, and all sections are responsive server components
-- [ ] The completed homepage remains fully static and contains no unnecessary client-side JavaScript
+- [x] Technical evidence communicates concrete agency capability without unsupported claims
+- [x] Delivery process and founder background explain who delivers the work and how an engagement progresses
+- [x] The closing call to action leads to the qualification page
+- [x] Frequently asked questions state that the product preview accepts no visitor data and that briefing creation is the current product boundary
+- [x] Reusable content is typed, and all sections are responsive server components
+- [x] The completed homepage remains fully static and contains no unnecessary client-side JavaScript
