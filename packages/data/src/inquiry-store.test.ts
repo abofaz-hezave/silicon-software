@@ -14,6 +14,8 @@ function makeInquiry(id: string, createdAt: string): QualifiedInquiry {
     id,
     name: 'Ada Lovelace',
     email: 'ada@example.com',
+    projectType: 'Scoped build',
+    budget: '€5,000 – €15,000',
     message: 'We need a briefing tool for our client intake process.',
     status: 'new',
     createdAt,

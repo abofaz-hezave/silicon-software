@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import HomePage from './page';
+import HomePage, { metadata } from './page';
 
 describe('HomePage', () => {
   const html = renderToStaticMarkup(<HomePage />);
@@ -35,5 +35,23 @@ describe('HomePage', () => {
     expect(html).toContain(
       'Fixed sample content only. The product preview accepts no visitor client data.',
     );
+  });
+
+  it('exposes Organization structured data as JSON-LD', () => {
+    const script = /<script type="application\/ld\+json">([^<]*)<\/script>/.exec(html)?.[1] ?? '';
+    const data: unknown = JSON.parse(script);
+
+    expect(data).toMatchObject({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Silicon Software',
+      url: 'http://localhost:3000',
+    });
+  });
+
+  it('declares canonical metadata for the homepage', () => {
+    expect(metadata.alternates?.canonical).toBe('/');
+    expect(metadata.title).toEqual(expect.any(String));
+    expect(metadata.description).toEqual(expect.any(String));
   });
 });

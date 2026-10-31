@@ -4,8 +4,8 @@
 
 **Blocked by:** 04 (Complete the homepage trust journey)
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] The page presents the founder background and delivery process already established on the homepage without duplicating their implementation
-- [ ] Calls to action provide a useful next step toward services or qualification
-- [ ] The route is fully static, responsive, and has accurate title, description, and canonical metadata
+- [x] The page presents the founder background and delivery process already established on the homepage without duplicating their implementation
+- [x] Calls to action provide a useful next step toward services or qualification
+- [x] The route is fully static, responsive, and has accurate title, description, and canonical metadata

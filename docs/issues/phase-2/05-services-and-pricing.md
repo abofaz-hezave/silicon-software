@@ -4,10 +4,10 @@
 
 **Blocked by:** 01 (Launch the marketing shell and homepage hero)
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] The page presents initial Intelligent Briefing setup from €2,500 and an ongoing product retainer from €1,000 per month
-- [ ] Paid discovery and complex customization are clearly described as separately priced engagements
-- [ ] Each relevant offer gives the prospect a working path to the qualification form
-- [ ] Pricing and services are sourced from typed content data
-- [ ] The route is fully static, responsive, and has accurate title, description, and canonical metadata
+- [x] The page presents initial Intelligent Briefing setup from €2,500 and an ongoing product retainer from €1,000 per month
+- [x] Paid discovery and complex customization are clearly described as separately priced engagements
+- [x] Each relevant offer gives the prospect a working path to the qualification form
+- [x] Pricing and services are sourced from typed content data
+- [x] The route is fully static, responsive, and has accurate title, description, and canonical metadata

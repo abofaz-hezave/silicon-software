@@ -8,7 +8,8 @@ const validInput = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Agency',
-  budget: '$10k – $25k',
+  projectType: 'Scoped build',
+  budget: '€5,000 – €15,000',
   message: 'We need a briefing tool for our client intake process.',
 };
 
