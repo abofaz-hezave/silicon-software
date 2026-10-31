@@ -1,4 +1,4 @@
-import type { PreviewMessage, ProductPreviewItem } from '@/content/products';
+import type { BriefingPreview, PreviewMessage } from '@/content/products';
 
 import { Tag } from './tag';
 
@@ -8,9 +8,7 @@ const speakerLabels = {
 } as const;
 
 type BriefingWorkspaceProps = Readonly<{
-  fields: readonly ProductPreviewItem[];
-  missingField: string;
-  conversation: readonly PreviewMessage[];
+  preview: BriefingPreview;
 }>;
 
 type ChatMessageProps = Readonly<{
@@ -36,7 +34,8 @@ function ChatMessage({ message }: ChatMessageProps) {
   );
 }
 
-function BriefingWorkspace({ fields, missingField, conversation }: BriefingWorkspaceProps) {
+function BriefingWorkspace({ preview }: BriefingWorkspaceProps) {
+  const { fields, missingField, conversation } = preview;
   const captured = `${String(fields.length)} of ${String(fields.length + 1)} captured`;
 
   return (
@@ -51,8 +50,8 @@ function BriefingWorkspace({ fields, missingField, conversation }: BriefingWorks
       </div>
       <div className="grid md:grid-cols-[1.05fr_0.95fr]">
         <div className="flex flex-col gap-3 border-b p-4 md:border-b-0 md:border-r">
-          {conversation.map((message) => (
-            <ChatMessage key={message.text} message={message} />
+          {conversation.map((message, index) => (
+            <ChatMessage key={index} message={message} />
           ))}
           <div
             className="text-muted-foreground mt-auto rounded-md border px-3 py-2 text-xs"

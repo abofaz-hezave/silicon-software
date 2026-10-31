@@ -1,7 +1,7 @@
 import { Button } from '@repo/ui/components/button';
 import Link from 'next/link';
 
-import { intelligentBriefing } from '@/content/products';
+import { intelligentBriefingPreview } from '@/content/products';
 
 import { BriefingWorkspace } from './briefing-workspace';
 import { Tag } from './tag';
@@ -32,11 +32,7 @@ function Hero() {
             Fixed sample content only. The product preview accepts no visitor client data.
           </p>
         </div>
-        <BriefingWorkspace
-          fields={intelligentBriefing.previewItems}
-          missingField={intelligentBriefing.previewMissingField}
-          conversation={intelligentBriefing.previewConversation}
-        />
+        <BriefingWorkspace preview={intelligentBriefingPreview} />
       </div>
     </section>
   );

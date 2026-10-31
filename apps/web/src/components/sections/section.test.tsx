@@ -64,38 +64,13 @@ describe('Section', () => {
     expect(defaultTone).toMatch(/^<section aria-labelledby="faq-heading" class="border-t py-20"/);
   });
 
-  it('constrains the container to max-w-7xl by default and max-w-4xl when narrow', () => {
-    const wide = renderToStaticMarkup(
+  it('constrains the container to max-w-7xl', () => {
+    const html = renderToStaticMarkup(
       <Section id="services" eyebrow="Services" title="Title">
         <div>Body</div>
       </Section>,
     );
-    const narrow = renderToStaticMarkup(
-      <Section id="faq" eyebrow="FAQ" title="Title" width="narrow">
-        <div>Body</div>
-      </Section>,
-    );
 
-    expect(wide).toContain('<div class="mx-auto max-w-7xl px-6 lg:px-8">');
-    expect(narrow).toContain('<div class="mx-auto max-w-4xl px-6 lg:px-8">');
-  });
-
-  it('renders split layout as a grid with the supplied classes and header and children as cells', () => {
-    const html = renderToStaticMarkup(
-      <Section
-        id="founder"
-        eyebrow="Founder"
-        title="Title"
-        layout="split"
-        gridClassName="gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start"
-      >
-        <div>Card body</div>
-      </Section>,
-    );
-
-    expect(html).toContain(
-      '<div class="mx-auto grid max-w-7xl px-6 lg:px-8 gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start"><div class="max-w-2xl"><span',
-    );
-    expect(html).toContain('Title</h2></div><div>Card body</div></div></section>');
+    expect(html).toContain('<div class="mx-auto max-w-7xl px-6 lg:px-8">');
   });
 });

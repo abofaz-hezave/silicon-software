@@ -7,12 +7,14 @@ describe('BriefingWorkspace', () => {
   it('renders each field as a term and value and marks the missing field as asked in chat', () => {
     const html = renderToStaticMarkup(
       <BriefingWorkspace
-        fields={[
-          { label: 'Project', value: 'Autumn campaign launch' },
-          { label: 'Audience', value: 'Returning customers' },
-        ]}
-        missingField="Budget"
-        conversation={[]}
+        preview={{
+          fields: [
+            { label: 'Project', value: 'Autumn campaign launch' },
+            { label: 'Audience', value: 'Returning customers' },
+          ],
+          missingField: 'Budget',
+          conversation: [],
+        }}
       />,
     );
 
@@ -28,12 +30,14 @@ describe('BriefingWorkspace', () => {
   it('renders each chat message with its speaker label', () => {
     const html = renderToStaticMarkup(
       <BriefingWorkspace
-        fields={[]}
-        missingField="Budget"
-        conversation={[
-          { speaker: 'assistant', text: 'What is this brief for?' },
-          { speaker: 'team', text: 'Autumn campaign launch.' },
-        ]}
+        preview={{
+          fields: [],
+          missingField: 'Budget',
+          conversation: [
+            { speaker: 'assistant', text: 'What is this brief for?' },
+            { speaker: 'team', text: 'Autumn campaign launch.' },
+          ],
+        }}
       />,
     );
 
