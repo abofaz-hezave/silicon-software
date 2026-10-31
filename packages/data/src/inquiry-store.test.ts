@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
@@ -20,10 +20,12 @@ function makeInquiry(id: string, createdAt: string): QualifiedInquiry {
   };
 }
 
-function createFakeDocumentClient(): DynamoDBDocumentClient {
+function createFakeDocumentClient() {
   const items: Record<string, unknown>[] = [];
+  const tableNames: string[] = [];
 
   const send = (command: PutCommand | ScanCommand): Promise<object> => {
+    tableNames.push(command.input.TableName ?? '');
     if (command instanceof PutCommand) {
       const item: unknown = command.input.Item;
       items.push({ ...(item as Record<string, unknown>) });
@@ -45,7 +47,8 @@ function createFakeDocumentClient(): DynamoDBDocumentClient {
     return Promise.reject(new Error('unsupported command'));
   };
 
-  return { send } as unknown as DynamoDBDocumentClient;
+  const client = { send } as unknown as DynamoDBDocumentClient;
+  return { client, tableNames };
 }
 
 function runInquiryStoreContract(name: string, makeStore: () => InquiryStore) {
@@ -95,5 +98,31 @@ function runInquiryStoreContract(name: string, makeStore: () => InquiryStore) {
 
 runInquiryStoreContract('in-memory', createInMemoryInquiryStore);
 runInquiryStoreContract('dynamo', () =>
-  createDynamoInquiryStore({ tableName: 'submissions', client: createFakeDocumentClient() }),
+  createDynamoInquiryStore({ tableName: 'submissions', client: createFakeDocumentClient().client }),
 );
+
+describe('dynamo store table name', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('throws at creation when neither tableName nor SUBMISSIONS_TABLE_NAME is set', () => {
+    vi.stubEnv('SUBMISSIONS_TABLE_NAME', undefined);
+
+    expect(() => createDynamoInquiryStore({ client: createFakeDocumentClient().client })).toThrow(
+      'SUBMISSIONS_TABLE_NAME',
+    );
+  });
+
+  it('uses SUBMISSIONS_TABLE_NAME when no tableName is given', async () => {
+    vi.stubEnv('SUBMISSIONS_TABLE_NAME', 'env-inquiries');
+    const fake = createFakeDocumentClient();
+    const store = createDynamoInquiryStore({ client: fake.client });
+
+    await store.save(
+      makeInquiry('00000000-0000-4000-8000-00000000000a', '2026-10-31T12:00:00.000Z'),
+    );
+
+    expect(fake.tableNames).toEqual(['env-inquiries']);
+  });
+});

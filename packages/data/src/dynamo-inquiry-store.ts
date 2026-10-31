@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb';
@@ -8,7 +10,7 @@ import { qualifiedInquirySchema } from './qualified-inquiry';
 import type { QualifiedInquiry } from './qualified-inquiry';
 
 export interface DynamoInquiryStoreConfig {
-  /** DynamoDB table holding inquiries. Defaults to `SUBMISSIONS_TABLE` env var, then `submissions`. */
+  /** DynamoDB table holding inquiries. Defaults to `SUBMISSIONS_TABLE_NAME` env var; required if that is unset. */
   tableName?: string;
   /** AWS region. Defaults to the runtime region (`AWS_REGION`), then `us-east-1`. */
   region?: string;
@@ -18,7 +20,10 @@ export interface DynamoInquiryStoreConfig {
 
 export function createDynamoInquiryStore(config: DynamoInquiryStoreConfig = {}): InquiryStore {
   const region = config.region ?? process.env.AWS_REGION ?? 'us-east-1';
-  const tableName = config.tableName ?? process.env.SUBMISSIONS_TABLE ?? 'submissions';
+  const tableName = config.tableName ?? process.env.SUBMISSIONS_TABLE_NAME;
+  if (!tableName) {
+    throw new Error('Set SUBMISSIONS_TABLE_NAME or pass tableName to createDynamoInquiryStore.');
+  }
   const client = config.client ?? DynamoDBDocumentClient.from(new DynamoDBClient({ region }));
 
   return {

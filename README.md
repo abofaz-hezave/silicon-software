@@ -51,13 +51,13 @@ agency-platform/
 
 ### Packages
 
-| Package               | Name               | Description                                                            |
-| --------------------- | ------------------ | ---------------------------------------------------------------------- |
-| `packages/ui`         | `@repo/ui`         | Framework-agnostic React 19 components built with shadcn/ui            |
-| `packages/config`     | `@repo/config`     | Shared ESLint, TypeScript, and Tailwind CSS configurations             |
-| `packages/data`       | `@repo/data`       | DynamoDB client (`createDataClient`) and typed submission repositories |
-| `packages/auth`       | `@repo/auth`       | Shared authentication logic (placeholder)                              |
-| `packages/rate-limit` | `@repo/rate-limit` | Rate limiting utilities for abuse protection (placeholder)             |
+| Package               | Name               | Description                                                                                      |
+| --------------------- | ------------------ | ------------------------------------------------------------------------------------------------ |
+| `packages/ui`         | `@repo/ui`         | Framework-agnostic React 19 components built with shadcn/ui                                      |
+| `packages/config`     | `@repo/config`     | Shared ESLint, TypeScript, and Tailwind CSS configurations                                       |
+| `packages/data`       | `@repo/data`       | Qualified inquiry intake (`createInquiryIntake`) and DynamoDB store (`createDynamoInquiryStore`) |
+| `packages/auth`       | `@repo/auth`       | Shared authentication logic (placeholder)                                                        |
+| `packages/rate-limit` | `@repo/rate-limit` | Rate limiting utilities for abuse protection (placeholder)                                       |
 
 ## Tech Stack
 

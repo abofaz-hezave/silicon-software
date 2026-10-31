@@ -49,3 +49,21 @@ export async function checkRateLimit(
     resetAt: Date.now() + windowMs,
   };
 }
+
+export interface RateLimiter {
+  check(identifier: string): Promise<RateLimitResult>;
+}
+
+export function createRateLimiter({
+  limit,
+  windowMs,
+}: {
+  limit: number;
+  windowMs: number;
+}): RateLimiter {
+  return {
+    check(identifier) {
+      return checkRateLimit(identifier, limit, windowMs);
+    },
+  };
+}
