@@ -10,20 +10,23 @@ function DeliveryProcess() {
       title="From a useful question to software your team can use."
       tone="muted"
     >
-      <ol className="mt-12 grid gap-0 border-l md:grid-cols-4 md:gap-4 md:border-l-0">
-        {deliveryStages.map((stage) => (
-          <li
-            key={stage.number}
-            className="relative border-b px-6 py-6 last:border-b-0 md:border-b-0 md:border-l md:py-2"
-          >
-            <span className="text-primary text-sm font-semibold" aria-hidden="true">
-              {stage.number}
-            </span>
-            <h3 className="mt-4 text-xl font-semibold">{stage.title}</h3>
-            <p className="text-muted-foreground mt-3 leading-7">{stage.description}</p>
-          </li>
-        ))}
-      </ol>
+      <div className="relative mt-12">
+        <div
+          className="bg-border absolute left-[12.5%] right-[12.5%] top-4 hidden h-px md:block"
+          aria-hidden="true"
+        />
+        <ol className="grid gap-8 md:grid-cols-4">
+          {deliveryStages.map((stage) => (
+            <li key={stage.number} className="relative">
+              <span className="bg-background relative flex size-8 items-center justify-center rounded-full border font-mono text-xs font-semibold">
+                {stage.number}
+              </span>
+              <h3 className="mt-4 text-sm font-semibold">{stage.title}</h3>
+              <p className="text-muted-foreground mt-2 text-sm leading-6">{stage.description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </Section>
   );
 }

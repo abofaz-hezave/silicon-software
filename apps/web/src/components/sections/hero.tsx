@@ -1,27 +1,26 @@
 import { Button } from '@repo/ui/components/button';
 import Link from 'next/link';
 
+import { intelligentBriefingPreview } from '@/content/products';
+
+import { BriefingWorkspace } from './briefing-workspace';
+import { Tag } from './tag';
+
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden">
-      <div
-        className="absolute inset-x-0 top-0 -z-10 h-96 bg-[radial-gradient(circle_at_top,hsl(var(--muted)),transparent_68%)]"
-        aria-hidden="true"
-      />
-      <div className="mx-auto flex min-h-[calc(100svh-4.5rem)] max-w-7xl items-center px-6 py-24 lg:px-8">
-        <div className="max-w-4xl">
-          <p className="border-border bg-background/70 mb-8 inline-flex rounded-full border px-3 py-1 text-sm font-medium shadow-sm">
-            Intelligent Briefing for marketing teams
-          </p>
-          <h1 className="font-display max-w-4xl text-balance text-5xl font-semibold tracking-[-0.04em] sm:text-7xl lg:text-8xl">
+    <section className="border-b bg-[radial-gradient(hsl(var(--border))_1px,transparent_1px)] [background-size:18px_18px]">
+      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-8 lg:py-28">
+        <div>
+          <Tag>Intelligent Briefing for marketing teams</Tag>
+          <h1 className="font-display mt-5 text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
             Turn scattered client input into a briefing your team can act on.
           </h1>
-          <p className="text-muted-foreground mt-8 max-w-2xl text-pretty text-lg leading-8 sm:text-xl">
+          <p className="text-muted-foreground mt-5 max-w-xl text-base leading-7">
             Silicon Software customizes Intelligent Briefing around your agency’s process, helping
             your team identify missing information and create clear, structured briefings without
             forcing every client into the same form.
           </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
               <Link href="/qualification">Discuss your workflow</Link>
             </Button>
@@ -29,10 +28,11 @@ function Hero() {
               <Link href="/intelligent-briefing">Explore the product preview</Link>
             </Button>
           </div>
-          <p className="text-muted-foreground mt-6 text-sm">
+          <p className="text-muted-foreground mt-5 font-mono text-xs">
             Fixed sample content only. The product preview accepts no visitor client data.
           </p>
         </div>
+        <BriefingWorkspace preview={intelligentBriefingPreview} />
       </div>
     </section>
   );
