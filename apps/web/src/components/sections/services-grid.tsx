@@ -1,8 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/card';
-
 import { services } from '@/content/services';
 
+import { BentoTile } from './bento-tile';
 import { Section } from './section';
+
+const serviceSpans = ['md:col-span-4', 'md:col-span-2', 'md:col-span-6'];
 
 function ServicesGrid() {
   return (
@@ -17,16 +18,15 @@ function ServicesGrid() {
         </p>
       }
     >
-      <div className="mt-12 grid gap-4 md:grid-cols-3">
-        {services.map((service) => (
-          <Card key={service.title} className="h-full shadow-none">
-            <CardHeader>
-              <CardTitle className="text-xl">{service.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground leading-7">{service.description}</p>
-            </CardContent>
-          </Card>
+      <div className="mt-12 grid gap-3 md:grid-cols-6">
+        {services.map((service, index) => (
+          <BentoTile
+            key={service.title}
+            code={`SVC-${String(index + 1).padStart(2, '0')}`}
+            title={service.title}
+            description={service.description}
+            className={serviceSpans[index]}
+          />
         ))}
       </div>
     </Section>

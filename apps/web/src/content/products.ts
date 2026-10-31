@@ -3,6 +3,11 @@ export interface ProductPreviewItem {
   value: string;
 }
 
+export interface PreviewMessage {
+  speaker: 'assistant' | 'team';
+  text: string;
+}
+
 export interface Product {
   name: string;
   eyebrow: string;
@@ -10,21 +15,35 @@ export interface Product {
   customization: string;
   previewNote: string;
   previewItems: readonly ProductPreviewItem[];
+  previewConversation: readonly PreviewMessage[];
+  previewMissingField: string;
   href: string;
 }
 
 export const intelligentBriefing: Product = {
   name: 'Intelligent Briefing',
-  eyebrow: 'Silicon Softwares current product',
+  eyebrow: 'Silicon Software’s current product',
   description:
     'A customizable AI briefing experience that helps marketing teams turn scattered client information into a clear, structured brief.',
   customization:
-   'We adapt its briefing model, guidance, and workflow to fit the way your team works.',
+    'We adapt its briefing model, guidance, and workflow to fit the way your team works.',
   previewNote: 'Anonymous fixed sample content. No visitor or customer data is used.',
   previewItems: [
     { label: 'Project', value: 'Autumn campaign launch' },
     { label: 'Audience', value: 'Returning customers' },
     { label: 'Primary goal', value: 'Increase qualified enquiries' },
   ],
+  previewConversation: [
+    { speaker: 'assistant', text: 'What is this brief for?' },
+    {
+      speaker: 'team',
+      text: 'Autumn campaign launch for returning customers. Main goal is more qualified enquiries.',
+    },
+    {
+      speaker: 'assistant',
+      text: 'Got it. When does this campaign need to go live? I don’t have a date yet.',
+    },
+  ],
+  previewMissingField: 'Deadline',
   href: '/intelligent-briefing',
 };

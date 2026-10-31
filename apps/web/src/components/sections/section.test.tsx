@@ -12,11 +12,21 @@ describe('Section', () => {
     );
 
     expect(html).toMatch(/^<section aria-labelledby="faq-heading"/);
-    expect(html).toContain('>FAQ</p>');
+    expect(html).toContain('>FAQ</span>');
     expect(html).toContain('<h2 id="faq-heading"');
     expect(html).toContain('Clear answers before a conversation.</h2>');
     expect(html).toContain('<p>Body copy</p>');
     expect(html.endsWith('</section>')).toBe(true);
+  });
+
+  it('renders the eyebrow inside the mono Tag chip', () => {
+    const html = renderToStaticMarkup(
+      <Section id="faq" eyebrow="FAQ" title="Title">
+        <div>Body</div>
+      </Section>,
+    );
+
+    expect(html).toMatch(/<span class="[^"]*font-mono[^"]*">FAQ<\/span>/);
   });
 
   it('renders intro directly after the heading inside the header block', () => {
@@ -49,11 +59,9 @@ describe('Section', () => {
     );
 
     expect(muted).toMatch(
-      /^<section aria-labelledby="faq-heading" class="bg-muted\/40 border-t py-24 sm:py-32"/,
+      /^<section aria-labelledby="faq-heading" class="bg-muted\/40 border-t py-20"/,
     );
-    expect(defaultTone).toMatch(
-      /^<section aria-labelledby="faq-heading" class="border-t py-24 sm:py-32"/,
-    );
+    expect(defaultTone).toMatch(/^<section aria-labelledby="faq-heading" class="border-t py-20"/);
   });
 
   it('constrains the container to max-w-7xl by default and max-w-4xl when narrow', () => {
@@ -86,7 +94,7 @@ describe('Section', () => {
     );
 
     expect(html).toContain(
-      '<div class="mx-auto grid max-w-7xl px-6 lg:px-8 gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start"><div class="max-w-2xl"><p',
+      '<div class="mx-auto grid max-w-7xl px-6 lg:px-8 gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start"><div class="max-w-2xl"><span',
     );
     expect(html).toContain('Title</h2></div><div>Card body</div></div></section>');
   });
